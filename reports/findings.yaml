@@ -1,0 +1,53 @@
+group_id: G180
+problem_id: MP252
+data_issues:
+  leaking_column:
+    present: false
+    column: null
+  unit_mixup:
+    present: true
+    column: pm25_today
+    group_value: Industrial
+    factor: 1000
+  sentinel_value:
+    present: true
+    column: temp_c
+    value: 999
+    count: 33
+  duplicate_rows:
+    present: false
+    count: null
+  stuck_sensor:
+    present: true
+    column: humidity_pct
+    start_date: '2026-03-20'
+    end_date: '2026-04-10'
+  target_typos:
+    present: true
+    count: 14
+  spelling_variants:
+    present: true
+    column: day_type
+    true_levels: 3
+tracking:
+  experiment_name: null
+  best_run_id: null
+  registered_model_name: null
+  champion_version: null
+monitoring:
+  psi:
+    pm25_today: null
+    wind_kmph: null
+    humidity_pct: null
+    temp_c: null
+    traffic_index: null
+    stubble_fires: null
+  most_drifted_feature: null
+  mae_by_group:
+    Central: null
+    Residential: null
+    Industrial: null
+  worst_served_group: null
+  mae_v1_on_check: null
+  mae_v2_on_check: null
+  decision: null
