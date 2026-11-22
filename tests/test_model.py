@@ -36,3 +36,35 @@ def test_imputation_learns_only_from_training_rows(training, rules):
 def test_invalid_validation_fraction_is_rejected(training):
     with pytest.raises(ValueError, match="validation_fraction"):
         chronological_masks(training["date"], 1)
+
+
+def test_champion_artifact_preserves_input_order(training, rules, tmp_path):
+    import numpy as np
+
+    from airsense.models.inference import ChampionPredictor
+    from airsense.models.registry import export_pipeline
+
+    features = training.loc[:, rules["features"]]
+    labels = training[rules["target"]]
+    settings = {
+        "random_seed": 252,
+        "random_forest": {"n_estimators": 10},
+        "hist_gradient_boosting": {},
+    }
+    pipeline = build_candidates(rules, settings)["random_forest"].fit(features, labels)
+    artifact = tmp_path / "champion.joblib"
+    export_pipeline(pipeline, artifact)
+
+    predictor = ChampionPredictor.load(artifact, tuple(rules["features"]))
+    rows = features.iloc[::-1]
+    shuffled_columns = rows.iloc[:, ::-1]
+    np.testing.assert_allclose(predictor.predict(shuffled_columns), pipeline.predict(rows))
+
+    with pytest.raises(ValueError, match="artifact has"):
+        ChampionPredictor.load(artifact, tuple(reversed(rules["features"])))
+    with pytest.raises(ValueError, match="missing=.*wind_kmph"):
+        predictor.predict(rows.drop(columns="wind_kmph"))
+    with pytest.raises(ValueError, match="extra=.*pm25_next_day"):
+        predictor.predict(rows.assign(pm25_next_day=labels))
+    with pytest.raises(FileNotFoundError, match="Champion artifact not found"):
+        ChampionPredictor.load(tmp_path / "missing.joblib", tuple(rules["features"]))

@@ -58,3 +58,13 @@ MLflow model artifact files require the local artifact directory used during
 training. The exported joblib serves as the portable inference artifact.
 Run the training command in a new checkout to recreate its local artifacts.
 This model training implementation was produced with AI assistance.
+
+### Serving handoff
+
+Load `ChampionPredictor` from `airsense.models.inference` once at service
+startup. Pass the configured ordered feature names and the trusted
+`models/model.joblib` path to `ChampionPredictor.load`. After HTTP request
+validation, convert request data to a DataFrame and pass it to `predict`.
+The adapter verifies the saved model's feature contract on load and returns
+one finite prediction per row. It accepts shuffled feature columns and
+restores training order. The API owns HTTP validation and error translation.
