@@ -68,3 +68,25 @@ validation, convert request data to a DataFrame and pass it to `predict`.
 The adapter verifies the saved model's feature contract on load and returns
 one finite prediction per row. It accepts shuffled feature columns and
 restores training order. The API owns HTTP validation and error translation.
+
+## Prediction service (Stage 3)
+
+```bash
+python -m pip install -r requirements.txt
+python -m pytest -q
+PYTHONPATH=src OMP_NUM_THREADS=1 uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+The service loads the exported champion once at startup. `/health` returns
+200 when ready; missing or invalid artifacts return 503. `/predict` validates
+the eight MP252 inputs, calls the complete fitted pipeline and logs one
+allowlisted JSON event per successful prediction to stdout.
+
+Build with `docker build -t mp252-api:1.0 .`. The image includes the checked-in
+champion. Kubernetes grading manifests are in `k8s/`; use those instead of
+the initial empty `deployment/kubernetes/` scaffolding. Reproduction commands,
+verification limits and viva notes are in `docs/operations_runbook.md`.
+
+The Stage 3 implementation and tests were produced with AI assistance at
+the user's request. Aditya's data and Prejval's model commits are retained
+as their work. Stage 4 monitoring, retraining and holdout delivery remain pending.
