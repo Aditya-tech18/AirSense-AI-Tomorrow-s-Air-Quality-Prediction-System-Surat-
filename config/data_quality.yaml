@@ -1,0 +1,20 @@
+# MP252 feature order is the model handoff contract.
+features:
+  - pm25_today
+  - wind_kmph
+  - humidity_pct
+  - temp_c
+  - traffic_index
+  - stubble_fires
+  - day_type
+  - station_zone
+target: pm25_next_day
+categories:
+  day_type: [weekday, weekend, festival]
+  station_zone: [Central, Residential, Industrial]
+aliases:
+  day_type: {"wee.": weekday, "fes.": festival}
+sentinel_candidates: [-999, -1, 999, 9999]
+unit_factors: [10, 12, 60, 100, 1000]
+minimum_stuck_days: 7
+target_typo_factor: 10
