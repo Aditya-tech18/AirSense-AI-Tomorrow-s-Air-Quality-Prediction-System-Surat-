@@ -1,0 +1,13 @@
+experiment_name: MP252-next-day-pm25
+registered_model_name: mp252-pm25-regressor
+artifact_path: models/model.joblib
+validation_fraction: 0.2
+random_seed: 252
+random_forest:
+  n_estimators: 200
+  min_samples_leaf: 4
+hist_gradient_boosting:
+  max_iter: 180
+  max_leaf_nodes: 15
+  min_samples_leaf: 15
+  learning_rate: 0.06

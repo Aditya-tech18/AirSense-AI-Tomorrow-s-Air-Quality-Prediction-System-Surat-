@@ -4,3 +4,5 @@ data:
   holdout: data/raw/holdout_features.csv
   quality: config/data_quality.yaml
   findings: reports/findings.yaml
+model:
+  settings: config/model.yaml
