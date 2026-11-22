@@ -36,3 +36,25 @@ are absent. Metadata includes record ID, observation date and station zone.
 
 The data-pipeline implementation was produced with AI assistance as
 requested by Aditya.
+
+## Model training and MLflow
+
+From the repository root, with the original training CSV in place:
+
+```bash
+OMP_NUM_THREADS=1 PYTHONPATH=src python scripts/train.py
+python -m pytest
+```
+
+Training compares a median baseline, random forest and histogram gradient
+boosting by MAE on held-out dates, with a one-day purge for the next-day
+label. Candidate preprocessing is fitted inside the training window.
+The winner is refitted on the full cleaned training split and exported to
+`models/model.joblib`. The service should pass the eight feature columns
+directly to the exported sklearn pipeline, which owns imputation and encoding.
+
+The SQLite database records the runs, validation metrics, and champion alias.
+MLflow model artifact files require the local artifact directory used during
+training. The exported joblib serves as the portable inference artifact.
+Run the training command in a new checkout to recreate its local artifacts.
+This model training implementation was produced with AI assistance.

@@ -5,3 +5,7 @@ __pycache__/
 .pytest_cache/
 .env
 /reports/*.tmp
+/mlartifacts/
+/mlruns/
+/mlflow.db-shm
+/mlflow.db-wal
